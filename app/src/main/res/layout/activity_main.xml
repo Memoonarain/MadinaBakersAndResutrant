@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:gravity="center"
+        app:menu="@menu/toolbar_menu">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textColor="@color/brown"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:fontFamily="cursive" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <!-- Search Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_margin="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:background="@drawable/search_bar_background">
+
+        <!-- Search EditText -->
+        <EditText
+            android:maxLines="1"
+            android:id="@+id/search_bar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="What are you looking for?"
+            android:minHeight="48dp"
+            android:padding="10dp"
+            android:textColor="#000"
+            android:textColorHint="#888888"
+            android:textSize="16sp" />
+
+        <!-- Search Icon -->
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/search_icon"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- ScrollView to allow scrolling for content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ScrollView
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <!-- Categories Heading -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Categories"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Categories Section -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_margin="10dp"
+                                android:id="@+id/allfood"
+                                android:textColor="@color/white"
+                                android:padding="15dp"
+                                android:background="@drawable/category_background"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="All"
+                                android:textSize="16sp"
+                                android:gravity="center" />
+
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/burger"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Burgers"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/shwarma"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Shwarma"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/drinks"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Drinks"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/pizza"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pizzas"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/sweets"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Sweets"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                            <TextView
+                                android:layout_marginEnd="10dp"
+                                android:layout_marginVertical="10dp"
+                                android:id="@+id/otherfood"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Other"
+                                android:background="@drawable/category_background"
+                                android:padding="15dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:gravity="center" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <LinearLayout
+                    android:id="@+id/popularFood"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <!-- Popular Items Heading -->
+                    <TextView
+                        android:id="@+id/food_list_heading"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Popular Items"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:layout_marginBottom="8dp" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="10dp"
+                            android:layout_margin="10dp"
+                            android:elevation="2dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="12dp"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:id="@+id/itemImg"
+                                    android:scaleType="centerCrop"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="220dp"
+                                    android:src="@drawable/img_pakore" />
+
+                                <TextView
+                                    android:id="@+id/itemTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center"
+                                    android:text="Pakore"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/itemPrice"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="500 Pkr/KG" />
+                                <RatingBar
+                                    android:id="@+id/ratingBar"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:numStars="5"
+                                    android:rating="4.5"
+                                    android:stepSize="0.5"
+                                    android:isIndicator="true"
+                                    android:layout_marginTop="4dp"
+                                    style="@style/Widget.AppCompat.RatingBar.Small" />
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="10dp"
+                            android:elevation="2dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="12dp"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:id="@+id/itemsImg"
+                                    android:scaleType="centerCrop"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="220dp"
+                                    android:src="@drawable/img_samose" />
+
+                                <TextView
+                                    android:id="@+id/itemsTitle"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center"
+                                    android:text="Samose"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/itemsPrice"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="50 Pkr/Piece" />
+                                <RatingBar
+                                    android:id="@+id/ratingBars"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:numStars="5"
+                                    android:rating="4.5"
+                                    android:stepSize="0.5"
+                                    android:isIndicator="true"
+                                    android:layout_marginTop="4dp"
+                                    style="@style/Widget.AppCompat.RatingBar.Small" />
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:padding="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="10dp"
+                            android:elevation="2dp"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:paddingBottom="12dp"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:id="@+id/itemsImgs"
+                                    android:scaleType="centerCrop"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="220dp"
+                                    android:src="@drawable/img_jalebi" />
+
+                                <TextView
+                                    android:id="@+id/itemsTitles"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="8dp"
+                                    android:gravity="center"
+                                    android:text="Jalebi"
+                                    android:textSize="20sp" />
+
+                                <TextView
+                                    android:id="@+id/itemsPrices"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="500 Pkr/KG" />
+                                <RatingBar
+                                    android:id="@+id/ratingsBars"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:numStars="5"
+                                    android:rating="4.5"
+                                    android:stepSize="0.5"
+                                    android:isIndicator="true"
+                                    android:layout_marginTop="4dp"
+                                    style="@style/Widget.AppCompat.RatingBar.Small" />
+
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/food_recycler_view"
+                    tools:listitem="@layout/food_item"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    android:layout_margin="10dp"/>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu"
+        app:itemIconTint="@color/brown"
+        app:itemTextColor="@color/brown"
+        app:backgroundTint="@android:color/white" />
+
+</LinearLayout>
