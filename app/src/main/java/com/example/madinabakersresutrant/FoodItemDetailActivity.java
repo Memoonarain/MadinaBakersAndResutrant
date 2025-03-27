@@ -30,13 +30,14 @@ public class FoodItemDetailActivity extends AppCompatActivity {
     TextView foodName, foodPrice, foodDescription, foodReviews;
     Button addToCartBtn;
     EditText quantityEditText;
+    LoadingDialogue loadingDialogue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food_item_detail);
         Window window = getWindow();
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.brown));
-
+        loadingDialogue = new LoadingDialogue(this);
         foodImage = findViewById(R.id.foodImage);
         foodName = findViewById(R.id.foodName);
         foodPrice = findViewById(R.id.foodPrice);
@@ -110,12 +111,14 @@ public class FoodItemDetailActivity extends AppCompatActivity {
 
         String userId = user.getUid();
 
+        loadingDialogue.showLoadingDialog();
         DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("users")
                 .child(userId)
                 .child("cart")
                 .child(itemId); // use itemId to avoid duplicates
 
         HashMap<String, Object> cartItem = new HashMap<>();
+        cartItem.put("ItemId", itemId);
         cartItem.put("name", name);
         cartItem.put("price", price);
         cartItem.put("img", imgUrl);
@@ -125,8 +128,10 @@ public class FoodItemDetailActivity extends AppCompatActivity {
         cartRef.setValue(cartItem).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Item added to cart", Toast.LENGTH_SHORT).show();
+                loadingDialogue.hideLoadingDialog();
             } else {
                 Toast.makeText(this, "Failed to add item", Toast.LENGTH_SHORT).show();
+                loadingDialogue.hideLoadingDialog();
             }
         });
     }

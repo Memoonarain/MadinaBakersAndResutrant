@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -44,7 +47,7 @@ public class CartActivity extends AppCompatActivity {
     List<CartItem> cartItems;
     CartAdapter cartAdapter;
     String uid;
-    private AlertDialog loadingDialog;
+    LoadingDialogue loadingDialogues;
 
 
     @Override
@@ -57,9 +60,11 @@ public class CartActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
-        showLoadingDialog();
+        loadingDialogues =new LoadingDialogue(CartActivity.this);
+        loadingDialogues.showLoadingDialog();
         recyclerView = findViewById(R.id.recyclerViewCartItems);
         totalTextView = findViewById(R.id.textViewTotal);
         checkoutButton = findViewById(R.id.buttonCheckout);
@@ -126,15 +131,15 @@ public class CartActivity extends AppCompatActivity {
                     if (Price == null || Quantity == null) continue;
                     int price = Integer.parseInt(Price.replace("Rs", "").trim());
                     int quantity = Integer.parseInt(Quantity);
-                    cartItems.add(new CartItem(name, price, quantity, imgUrl));
+                    cartItems.add(new CartItem(name, price, quantity, imgUrl,id));
                 }
-                hideLoadingDialog();
+                loadingDialogues.hideLoadingDialog();
                 cartAdapter.notifyDataSetChanged();updateTotal();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                hideLoadingDialog();
+                loadingDialogues.hideLoadingDialog();
                 Toast.makeText(CartActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
@@ -231,53 +236,104 @@ public class CartActivity extends AppCompatActivity {
                 return;
             }
 
-            // Here, you can save the order to Firebase or wherever
-            sheet.dismiss();
-            showSuccessDialog();
+            RadioButton selectedRadio = view.findViewById(selectedId);
+            String paymentMethod = selectedRadio.getText().toString();
+            String address = addressOrPickup.equals("Self Pickup") ? "N/A" : addressOrPickup;
+            String deliveryType = addressOrPickup.equals("Self Pickup") ? "Self Pickup" : "Home Delivery";
+
+            if (paymentMethod.equals("Cash on Delivery")){
+                // Call the function with all required arguments
+                placeOrder(deliveryType, address, paymentMethod);
+                sheet.dismiss();
+            }
+            else {
+                Toast.makeText(this, "Online payment is not available for now...", Toast.LENGTH_SHORT).show();
+            }
         });
     }
-    private void showSuccessDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle("Order Placed")
-                .setMessage("Your order has been placed successfully!")
-                .setPositiveButton("OK", (dialog, which) -> {
-                    dialog.dismiss();
-                    finish(); // or go to Home screen
-                })
-                .show();
-    }
-    public void showLoadingDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false); // disable dismiss on outside touch
 
-        // Create a LinearLayout with a ProgressBar and TextView
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setPadding(40, 40, 40, 40);
-        layout.setGravity(Gravity.CENTER_VERTICAL);
-
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
-
-        TextView loadingText = new TextView(this);
-        loadingText.setText("Loading...");
-        loadingText.setTextSize(18);
-        loadingText.setPadding(30, 0, 0, 0);
-
-        layout.addView(progressBar);
-        layout.addView(loadingText);
-
-        builder.setView(layout);
-        loadingDialog = builder.create();
-        loadingDialog.show();
-    }
-    public void hideLoadingDialog() {
-        if (loadingDialog != null && loadingDialog.isShowing()) {
-            loadingDialog.dismiss();
+    private void placeOrder(String deliveryType, String address, String paymentMethod) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Please login", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        String orderId = FirebaseDatabase.getInstance().getReference().push().getKey();
+        long timestamp = System.currentTimeMillis();
+
+        List<CartItem> selectedItems = new ArrayList<>();
+        int total = 0;
+
+        // Filter for selected items and calculate total price based on updated quantities
+        for (CartItem item : cartItems) {
+            if (item.isSelected()) {
+                selectedItems.add(item);
+                total += item.getPrice() * item.getQuantity();
+            }
+        }
+
+        // Ensure that selectedItems is not empty (user has selected items)
+        if (selectedItems.isEmpty()) {
+            Toast.makeText(this, "Please select items to place an order", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        loadingDialogues.showLoadingDialog();
+        // Create the OrderModel with only selected items
+        OrderModel order = new OrderModel(
+                orderId,
+                user.getUid(),
+                "Pending",
+                selectedItems,  // Use selected items list
+                total,
+                paymentMethod,
+                deliveryType,
+                address,
+                timestamp
+        );
+
+        DatabaseReference orderRef = FirebaseDatabase.getInstance().getReference("Orders").child(uid);
+        orderRef.child(orderId).setValue(order).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                Toast.makeText(this, "Order placed!", Toast.LENGTH_SHORT).show();
+                loadingDialogues.hideLoadingDialog();
+                for (CartItem item : selectedItems) {
+                    dbRef.child(item.getItemId()).removeValue(); // or use unique ID instead of name
+                }
+
+                startActivity(new Intent(CartActivity.this, OrdersActivity.class));
+                finish();
+            } else {
+                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+                loadingDialogues.hideLoadingDialog();
+            }
+        });
+
+        // Store the order under the user's "MyOrders"
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(user.getUid())
+                .child("MyOrders")
+                .child(orderId)
+                .setValue(order);
     }
+
     public interface OnAddressClickListener {
         void onAddressClick(AddressModel addressModel);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            // Open AccountActivity
+            startActivity(new Intent(CartActivity.this, AccountActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

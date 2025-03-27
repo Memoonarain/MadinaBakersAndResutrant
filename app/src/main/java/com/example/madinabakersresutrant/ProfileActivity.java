@@ -2,6 +2,7 @@ package com.example.madinabakersresutrant;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,6 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     String uid;
     DatabaseReference userRef;
+    LoadingDialogue loadingDialogue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +40,16 @@ public class ProfileActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
-
+        loadingDialogue = new LoadingDialogue(this);
+        loadingDialogue.showLoadingDialog();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         userRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
-
+        findViewById(R.id.orders).setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, OrdersActivity.class)));
+        findViewById(R.id.aboutus).setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, ApplicationInformationActivity.class)));
+        findViewById(R.id.privacy).setOnClickListener(v -> startActivity(new Intent(ProfileActivity.this, ApplicationInformationActivity.class)));
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -56,11 +63,13 @@ public class ProfileActivity extends AppCompatActivity {
                             fallback(R.drawable.profile).
                             error(R.drawable.profile)
                             .into(UserImg);
+                    loadingDialogue.hideLoadingDialog();
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                loadingDialogue.hideLoadingDialog();
                 Toast.makeText(ProfileActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
             }
         });
@@ -101,5 +110,20 @@ public class ProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            // Open AccountActivity
+            startActivity(new Intent(ProfileActivity.this, AccountActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

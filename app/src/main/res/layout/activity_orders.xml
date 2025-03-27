@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OrdersActivity">
+
+    <TextView
+        android:layout_margin="20dp"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Orders"
+        android:textSize="24sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="8dp" />
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/all_orders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_allorder"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/to_recieve"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_torecieve"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Recieve"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/to_ship"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_toship"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To Ship"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/to_pay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_pending"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/cancelled"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_cancelled"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelled"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_margin="10dp"
+            android:background="@drawable/edittext_background"
+            android:id="@+id/to_review"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:padding="8dp"
+            android:gravity="center">
+
+            <ImageView
+                android:scaleType="centerCrop"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/icon_toreview"
+                app:tint="@color/skin" />
+
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To review"
+                android:textSize="18sp"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>

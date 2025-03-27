@@ -18,6 +18,15 @@
         android:theme="@style/Theme.MadinaBakersResutrant"
         tools:targetApi="31">
         <activity
+            android:name=".FilteredOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ApplicationInformationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OrdersActivity"
+            android:exported="false" />
+        <activity
             android:name=".MapActivity"
             android:exported="false" />
         <activity
@@ -47,6 +56,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
         <activity
             android:name=".MainActivity"
             android:exported="false" />

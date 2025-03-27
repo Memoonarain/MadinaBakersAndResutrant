@@ -41,6 +41,7 @@ dependencies {
 
 // Location Services (for getting current location)
     implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation ("com.google.firebase:firebase-messaging:23.3.1")
 
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-analytics")

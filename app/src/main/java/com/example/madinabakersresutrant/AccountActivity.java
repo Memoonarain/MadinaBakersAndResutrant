@@ -43,7 +43,7 @@ public class AccountActivity extends AppCompatActivity {
     String uid;
     DatabaseReference userRef;
     StorageReference storageRef;
-
+    LoadingDialogue loadingDialogue;
     private static final int PICK_IMAGE_REQUEST = 1;
 
     @Override
@@ -57,7 +57,8 @@ public class AccountActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        loadingDialogue = new LoadingDialogue(AccountActivity.this);
+        loadingDialogue.showLoadingDialog();
         // 🔌 Initialize
         birthdate = findViewById(R.id.birthdate);
         edtGenders = findViewById(R.id.Gender);
@@ -77,6 +78,7 @@ public class AccountActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
+                    loadingDialogue.hideLoadingDialog();
                     edtName.setText(snapshot.child("name").getValue(String.class));
                     edtEmail.setText(snapshot.child("email").getValue(String.class));
                     edtGenders.setText(snapshot.child("Gender").getValue(String.class));
@@ -96,6 +98,7 @@ public class AccountActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                loadingDialogue.hideLoadingDialog();
                 Toast.makeText(AccountActivity.this, "Failed to load data", Toast.LENGTH_SHORT).show();
             }
         });
@@ -127,6 +130,7 @@ public class AccountActivity extends AppCompatActivity {
                 return;
             }
 
+            loadingDialogue.showLoadingDialog();
             // Convert birthdate string to millis
             long birthMillis = convertDateToMillis(birthDateStr);
 
@@ -161,8 +165,10 @@ public class AccountActivity extends AppCompatActivity {
         userRef.updateChildren(updates).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                loadingDialogue.hideLoadingDialog();
             } else {
                 Toast.makeText(this, "Failed to update", Toast.LENGTH_SHORT).show();
+                loadingDialogue.hideLoadingDialog();
             }
         });
     }

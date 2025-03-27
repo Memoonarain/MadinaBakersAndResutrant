@@ -18,7 +18,7 @@
         android:gravity="center"
         app:menu="@menu/toolbar_menu">
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textColor="@color/brown"
@@ -29,6 +29,7 @@
 
     <!-- Search Bar -->
     <LinearLayout
+        android:id="@+id/searchLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
@@ -40,7 +41,7 @@
         <!-- Search EditText -->
         <EditText
             android:maxLines="1"
-            android:id="@+id/search_bar"
+            android:id="@+id/searchBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

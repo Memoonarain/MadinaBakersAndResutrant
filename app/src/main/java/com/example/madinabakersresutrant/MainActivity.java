@@ -5,8 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,25 +42,40 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<FoodModel> foodList;
     FoodAdapter foodAdapter;
     DatabaseReference dbRef;
-    private AlertDialog loadingDialog;
-
+    LoadingDialogue loadingDialogues;
+    EditText searchEdt;
+    ImageView searchIcon;
+    LinearLayout searchLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        searchEdt = findViewById(R.id.searchBar);
+        searchLayout= findViewById(R.id.searchLayout);
+        searchIcon = findViewById(R.id.search_icon);
+        loadingDialogues =new LoadingDialogue(MainActivity.this);
         recyclerView = findViewById(R.id.food_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         foodList = new ArrayList<>();
         foodAdapter = new FoodAdapter(this, foodList);
         recyclerView.setAdapter(foodAdapter);
+        searchIcon.setOnClickListener(v -> {
+            String query = searchEdt.getText().toString().trim().toLowerCase();
+            if (!query.isEmpty()) {
+                searchFoodItems(query);
+            } else {
+                Toast.makeText(MainActivity.this, "Enter a food name to search", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         setupBottomNav();
         setupCategoryButtons(); // <--- Setup your category buttons (e.g., All, Pizza, etc.)
@@ -114,41 +134,68 @@ public class MainActivity extends AppCompatActivity {
         selectedBtn.setTextColor(getResources().getColor(R.color.black));
     }
 
+    private void searchFoodItems(String query) {
+        loadingDialogues.showLoadingDialog();
+        dbRef = FirebaseDatabase.getInstance().getReference("food_categories");
 
-    public void showLoadingDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false); // disable dismiss on outside touch
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                foodList.clear();
 
-        // Create a LinearLayout with a ProgressBar and TextView
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setPadding(40, 40, 40, 40);
-        layout.setGravity(Gravity.CENTER_VERTICAL);
+                for (DataSnapshot categorySnap : snapshot.getChildren()) {
+                    for (DataSnapshot foodSnap : categorySnap.getChildren()) {
+                        String name = foodSnap.getKey();
+                        String id = foodSnap.child("ItemId").getValue(String.class);
+                        String price = foodSnap.child("Price").getValue(String.class);
+                        String category = foodSnap.child("category").getValue(String.class);
+                        String img = foodSnap.child("img").getValue(String.class);
 
-        ProgressBar progressBar = new ProgressBar(this);
-        progressBar.setIndeterminate(true);
+                        if (name != null && name.toLowerCase().contains(query)) {
+                            foodList.add(new FoodModel(name, price, category, img, id));
+                        }
+                    }
+                }
 
-        TextView loadingText = new TextView(this);
-        loadingText.setText("Loading...");
-        loadingText.setTextSize(18);
-        loadingText.setPadding(30, 0, 0, 0);
+                foodAdapter.notifyDataSetChanged();
+                loadingDialogues.hideLoadingDialog();
 
-        layout.addView(progressBar);
-        layout.addView(loadingText);
+                if (foodList.isEmpty()) {
+                    Toast.makeText(MainActivity.this, "No items found for: " + query, Toast.LENGTH_SHORT).show();
+                    recyclerView.setVisibility(View.GONE);
+                    findViewById(R.id.popularFood).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.popularFood).setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
 
-        builder.setView(layout);
-        loadingDialog = builder.create();
-        loadingDialog.show();
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                loadingDialogues.hideLoadingDialog();
+                Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    public void hideLoadingDialog() {
-        if (loadingDialog != null && loadingDialog.isShowing()) {
-            loadingDialog.dismiss();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            // Open AccountActivity
+            startActivity(new Intent(MainActivity.this, AccountActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     private void fetchFoodItemsByCategory(String selectedCategory) {
-        showLoadingDialog(); // <--- Show loader
+        loadingDialogues.showLoadingDialog();
         dbRef = FirebaseDatabase.getInstance().getReference("food_categories");
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -170,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 foodAdapter.notifyDataSetChanged();
-                hideLoadingDialog(); // <--- Hide loader
+                loadingDialogues.hideLoadingDialog();
 
                 if (foodList.isEmpty()) {
                     Toast.makeText(MainActivity.this, "No items found in " + selectedCategory + "!", Toast.LENGTH_SHORT).show();
@@ -184,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                hideLoadingDialog(); // <--- Hide loader
+                loadingDialogues.hideLoadingDialog();
                 Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

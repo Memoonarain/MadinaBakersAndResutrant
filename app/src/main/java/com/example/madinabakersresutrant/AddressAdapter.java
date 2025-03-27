@@ -16,6 +16,14 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     private Context context;
     private List<AddressModel> addressModelList;
     private CartActivity.OnAddressClickListener listener;
+    private AddressAdapter.OnAddressActionListener actionListener;
+
+    public AddressAdapter(Context context, List<AddressModel> addressModelList, AddressAdapter.OnAddressActionListener actionListener) {
+        this.context = context;
+        this.addressModelList = addressModelList;
+        this.actionListener = actionListener;
+    }
+
     public AddressAdapter(Context context, List<AddressModel> addressModelList, CartActivity.OnAddressClickListener listener){
         this.context = context;
         this.addressModelList = addressModelList;
@@ -29,9 +37,12 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
     @Override
     public AddressAdapter.AddressViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.address_item, parent, false);
-
         return new AddressViewHolder(view);
 
+    }
+    public interface OnAddressActionListener {
+        void onEdit(AddressModel model);
+        void onDelete(AddressModel model);
     }
 
     @Override
@@ -43,6 +54,17 @@ public class AddressAdapter extends RecyclerView.Adapter<AddressAdapter.AddressV
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onAddressClick(addressModel);
+            }
+        });
+        holder.btnEdit.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onEdit(addressModel);
+            }
+        });
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (actionListener != null) {
+                actionListener.onDelete(addressModel);
             }
         });
 

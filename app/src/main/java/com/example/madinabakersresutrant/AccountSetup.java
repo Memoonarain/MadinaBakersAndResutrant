@@ -41,7 +41,7 @@ public class AccountSetup extends AppCompatActivity {
     private String verificationId;
     private EditText edtName, edtPhone, edtOtp, edtAddress;
     private Button btnOtp, btnNext;
-
+    LoadingDialogue loadingDialogue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +53,7 @@ public class AccountSetup extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        loadingDialogue = new LoadingDialogue(AccountSetup.this);
         mAuth = FirebaseAuth.getInstance();
         edtName = findViewById(R.id.edtName);
         edtPhone = findViewById(R.id.edtPhone);
@@ -64,7 +64,10 @@ public class AccountSetup extends AppCompatActivity {
         findViewById(R.id.txtSkip).setOnClickListener(v -> startActivity(new Intent(this, ProfileActivity.class)));
         btnOtp.setOnClickListener(v -> generateOtp());
 
-        btnNext.setOnClickListener(v -> validateAndProceed());
+        btnNext.setOnClickListener(v -> {
+            validateAndProceed();
+            loadingDialogue.showLoadingDialog();
+        });
     }
 
     private void generateOtp() {
@@ -74,6 +77,7 @@ public class AccountSetup extends AppCompatActivity {
             Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
             return;
         }
+        loadingDialogue.showLoadingDialog();
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(phoneNumber)
@@ -84,11 +88,13 @@ public class AccountSetup extends AppCompatActivity {
                             public void onVerificationCompleted(PhoneAuthCredential credential) {
                                 // Auto-retrieval or instant verification succeeded
                                 signInWithPhoneAuthCredential(credential);
+                                loadingDialogue.hideLoadingDialog();
                             }
 
                             @Override
                             public void onVerificationFailed(FirebaseException e) {
                                 Toast.makeText(AccountSetup.this, "Verification failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                loadingDialogue.hideLoadingDialog();
                             }
 
                             @Override
@@ -96,6 +102,7 @@ public class AccountSetup extends AppCompatActivity {
                                 // Save verification ID to use in OTP verification
                                 AccountSetup.this.verificationId = verificationId;
                                 Toast.makeText(AccountSetup.this, "OTP sent", Toast.LENGTH_SHORT).show();
+                                loadingDialogue.hideLoadingDialog();
                             }
                         })
                         .build();
@@ -120,6 +127,7 @@ public class AccountSetup extends AppCompatActivity {
 
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, otp);
         signInWithPhoneAuthCredential(credential);
+
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
@@ -137,12 +145,15 @@ public class AccountSetup extends AppCompatActivity {
                             if (t.isSuccessful()) {
                                 Toast.makeText(this, "Account created", Toast.LENGTH_SHORT).show();
                                 startActivity(new Intent(AccountSetup.this, MainActivity.class));
+                                loadingDialogue.hideLoadingDialog();
                                 finish();
                             } else {
                                 Toast.makeText(this, "Failed to save data", Toast.LENGTH_SHORT).show();
+                                loadingDialogue.hideLoadingDialog();
                             }
                         });
                     } else {
+                        loadingDialogue.hideLoadingDialog();
                         Toast.makeText(AccountSetup.this, "Verification failed", Toast.LENGTH_SHORT).show();
                     }
                 });
